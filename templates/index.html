@@ -1,15 +1,32 @@
 {% extends "base.html" %}
-{% block title %}
-Home | Farmer Guide AI
-{% endblock %}
+{% block title %}Home | Farmer Guide AI{% endblock %}
 {% block content %}
-<div class="container text-center mt-5">
-    <h1>🌾 Welcome to Farmer Guide AI</h1>
-    <p class="lead">
-        AI Powered Smart Farming Assistant
-    </p>
-    <button class="btn btn-success">
-        Get Started
-    </button>
-</div>
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">
+                    Smart Farming with
+                    <span class="text-success">Artificial Intelligence</span>
+                </h1>
+                <p class="lead mt-4">
+                    Farmer Guide AI helps farmers make better decisions using
+                    Crop Recommendation, Disease Detection, Weather Forecast,
+                    Fertilizer Recommendation and an AI Chatbot.
+                </p>
+                <a href="/register" class="btn btn-success btn-lg me-3">
+                    Get Started
+                </a>
+                <a href="/about" class="btn btn-outline-success btn-lg">
+                    Learn More
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{{ url_for('static', filename='images/Hero1.jpg') }}"
+                     class="img-fluid hero-image"
+                     alt="Farmer Guide AI">
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
