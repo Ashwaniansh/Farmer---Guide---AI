@@ -1,3 +1,5 @@
+import joblib
+import numpy as np
 from flask import Flask, render_template, request, redirect, flash
 from models import db
 from models.user import User
@@ -11,6 +13,7 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    crop_model = joblib.load("D:\Capstone Project\Farmer---Guide---AI\Model\crop_model.pkl")
 
 @app.route("/")
 def home():
@@ -60,8 +63,22 @@ def register():
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route("/crop")
+@app.route("/crop", methods=["GET", "POST"])
 def crop():
+    if request.method == "POST":
+        N = float(request.form["N"])
+        P = float(request.form["P"])
+        K = float(request.form["K"])
+        temperature = float(request.form["temperature"])
+        humidity = float(request.form["humidity"])
+        ph = float(request.form["ph"])
+        rainfall = float(request.form["rainfall"])
+        data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+        prediction = crop_model.predict(data)
+        return render_template(
+            "crop.html",
+            prediction=prediction[0]
+        )
     return render_template("crop.html")
 
 @app.route("/disease")
