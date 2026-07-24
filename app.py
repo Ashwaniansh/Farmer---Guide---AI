@@ -22,16 +22,15 @@ def about():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         email = request.form.get("email")
         password = request.form.get("password")
-
-        flash("Login feature will be connected with database soon.", "info")
-
-        return redirect("/login")
-
+        user = User.query.filter_by(email=email).first()
+        if user and user.password == password:
+            flash("Login Successful", "success")
+            return redirect("/dashboard")
+        else:
+            flash("Invalid Email or Password", "danger")
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -41,6 +40,10 @@ def register():
         email = request.form.get("email")
         mobile = request.form.get("mobile")
         password = request.form.get("password")
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("Email already registered!", "danger")
+            return redirect("/register")
         user = User(
             name=name,
             email=email,
