@@ -42,3 +42,29 @@ body{
     font-size:17px;
     line-height:1.8;
 }
+.service-card{
+    border:none;
+    border-radius:20px;
+    transition:0.3s;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+.service-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+#why-us{
+    padding:80px 0;
+}
+#why-us .card{
+    border:none;
+    border-radius:18px;
+}
+.card{
+    border:none;
+    border-radius:20px;
+    transition:0.3s;
+}
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}

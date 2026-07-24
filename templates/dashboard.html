@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Farmer Guide AI{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-success">
+            Farmer Dashboard
+        </h1>
+        <p class="text-muted">
+            Welcome to Farmer Guide AI
+        </p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-tree-fill display-3 text-success"></i>
+                <h4 class="mt-3">Crop Recommendation</h4>
+                <a href="/crop" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-bug-fill display-3 text-danger"></i>
+                <h4 class="mt-3">Disease Detection</h4>
+                <a href="/disease" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-cloud-sun-fill display-3 text-warning"></i>
+                <h4 class="mt-3">Weather Forecast</h4>
+                <a href="/weather" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-droplet-half display-3 text-primary"></i>
+                <h4 class="mt-3">Fertilizer Recommendation</h4>
+                <a href="/fertilizer" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-currency-rupee display-3 text-success"></i>
+                <h4 class="mt-3">Market Prices</h4>
+                <a href="/market" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow text-center p-4">
+                <i class="bi bi-robot display-3 text-info"></i>
+                <h4 class="mt-3">AI Chatbot</h4>
+                <a href="/chatbot" class="btn btn-success mt-3">
+                    Open
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
