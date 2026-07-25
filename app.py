@@ -1,3 +1,5 @@
+import os
+from werkzeug.utils import secure_filename
 import joblib
 import numpy as np
 from flask import Flask, render_template, request, redirect, flash
@@ -5,6 +7,8 @@ from models import db
 from models.user import User
 from config import Config
 app = Flask(__name__)
+UPLOAD_FOLDER = "static/uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["SECRET_KEY"] = "FarmerGuideAI@2026"
 
 app.config.from_object(Config)
@@ -29,11 +33,14 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
         user = User.query.filter_by(email=email).first()
-        if user and user.password == password:
-            flash("Login Successful", "success")
-            return redirect("/dashboard")
+        if user:
+            if user.password == password:
+                flash("Welcome " + user.name, "success")
+                return redirect("/dashboard")
+            else:
+                flash("Incorrect Password", "danger")
         else:
-            flash("Invalid Email or Password", "danger")
+            flash("User Not Found", "warning")
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -81,9 +88,17 @@ def crop():
         )
     return render_template("crop.html")
 
-@app.route("/disease")
+@app.route("/disease", methods=["GET", "POST"])
 def disease():
-    return render_template("disease.html")
+    image = None
+    if request.method == "POST":
+        file = request.files["image"]
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
+            image = filename
+    return render_template("disease.html", image=image)
 
 @app.route("/weather")
 def weather():

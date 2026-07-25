@@ -1,12 +1,58 @@
 {% extends "base.html" %}
-
-{% block title %}Coming Soon{% endblock %}
-
+{% block title %}Disease Detection{% endblock %}
 {% block content %}
-
-<div class="container py-5 text-center">
-    <h2 class="text-success">Coming Soon...</h2>
-    <p>This module is under development.</p>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="text-success fw-bold">
+         AI Disease Detection
+        </h1>
+        <p class="lead">
+            Upload a crop leaf image and AI will detect the disease.
+        </p>
+    </div>
+    <div class="row">
+<!-- Upload Card -->
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <label class="form-label">
+                        Upload Leaf Image
+                    </label>
+                    <input
+                        type="file"
+                        name="image"
+                        class="form-control"
+                        required>
+                    <button class="btn btn-success w-100 mt-4">
+                        Detect Disease
+                    </button>
+                </form>
+            </div>
+        </div>
+<!-- Result Card -->
+        <div class="col-md-6">
+            <div class="card shadow p-4 text-center">
+                <h2 class="text-success">
+                    Prediction Result
+                </h2>
+                <hr>
+                <h1 class="display-5">
+                {% if image %}
+                <img src="{{ url_for('static', filename='uploads/' + image) }}"
+                class="img-fluid rounded mb-3">
+                <h3 class="text-success">
+                    Image Uploaded Successfully
+                </h3>
+                {% else %}
+                <h3>No Image Uploaded</h3>
+                <p>Upload a leaf image to see prediction.</p>
+                {% endif %}
+                </h1>
+                <p>
+                    Upload a leaf image to see AI prediction.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}
