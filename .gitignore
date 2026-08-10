@@ -221,4 +221,9 @@ __marimo__/
 
 # Dataset
 Data/PlantVillage/
+
+# Local database
 database/*.db
+
+# Extra notebook models
+notebook/Model/
