@@ -221,3 +221,4 @@ __marimo__/
 
 # Dataset
 Data/PlantVillage/
+database/*.db
