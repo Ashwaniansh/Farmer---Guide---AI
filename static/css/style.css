@@ -5,7 +5,17 @@
     font-family:'Poppins',sans-serif;
 }
 body{
-    background:#f8f9fa;
+    background-image:
+        linear-gradient(
+            rgba(230, 245, 235, 0.55),
+            rgba(230, 245, 235, 0.55)
+        ),
+        url("../images/Background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
 }
 .hero{
     min-height:90vh;

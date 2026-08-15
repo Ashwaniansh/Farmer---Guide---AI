@@ -44,20 +44,39 @@
                         class="img-fluid rounded mb-3"
                         style="max-height: 400px; object-fit: contain;">
                     {% if prediction %}
-                        <div class="prediction-result mt-3">
-                            <h3>
-                                Disease Detected
-                            </h3>
-                            <h4 class="text-success">
-                                {{ prediction }}
-                            </h4>
-                            <p class="mt-2">
-                                Confidence:
-                                <strong>
-                                    {{ "%.2f"|format(confidence) }}%
-                                </strong>
-                            </p>
-                        </div>
+    <div class="prediction-result mt-3">
+        {% if prediction == "Unable to identify disease" %}
+            <h3 class="text-warning">
+                 Unable to Identify Disease
+            </h3>
+            <p>
+                The image could not be classified confidently.
+                Please upload a clear crop leaf image.
+            </p>
+        {% elif prediction == "Tomato Healthy"
+            or prediction == "Potato Healthy"
+            or prediction == "Pepper Bell Healthy" %}
+            <h3 class="text-success">
+                 Plant Appears Healthy
+            </h3>
+            <h4 class="text-success">
+                {{ prediction }}
+            </h4>
+        {% else %}
+            <h3 class="text-danger">
+                 Disease Detected
+            </h3>
+            <h4 class="text-success">
+                {{ prediction }}
+            </h4>
+        {% endif %}
+        <p class="mt-2">
+            Confidence:
+            <strong>
+                {{ "%.2f"|format(confidence) }}%
+            </strong>
+        </p>
+    </div>
                         {% if disease_info %}
                             <div class="mt-4 text-start">
                                 <div class="card mb-3">

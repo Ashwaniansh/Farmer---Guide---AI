@@ -121,6 +121,17 @@ DISEASE_INFO = {
         "prevention": "Continue proper watering, nutrition, and regular monitoring."
     }
 }
+def validate_image(filepath):
+    try:
+        img = load_img(filepath, target_size=(224, 224))
+        img_array = img_to_array(img)
+        if img_array.mean() < 20:
+            return False
+        if img_array.std() < 10:
+            return False
+        return True
+    except Exception:
+        return False
 
 app.config.from_object(Config)
 db.init_app(app)
@@ -215,6 +226,17 @@ def disease():
         
             file.save(filepath)
             image = filename
+            if not validate_image(filepath):
+                prediction = "Invalid Image"
+                confidence = 0.0
+                disease_info = None
+
+                return render_template(
+                    "disease.html",
+                    image=image,
+                    prediction=prediction,
+                    confidence=confidence,
+                    disease_info=disease_info)
             img = load_img(
                 filepath,
                 target_size=(224, 224))
