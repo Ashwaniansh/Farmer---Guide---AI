@@ -227,3 +227,21 @@ database/*.db
 
 # Extra notebook models
 notebook/Model/
+# Farmer Guide AI - Project Specific
+
+# Disease Detection Dataset
+Data/PlantDiseaseV2/
+
+# Uploaded / test images
+static/uploads/
+
+# Model checkpoints
+Model/checkpoints/
+
+# Temporary Keras/TensorFlow models
+*.h5
+
+# TensorFlow checkpoints
+*.ckpt
+*.ckpt.data-*
+*.ckpt.index

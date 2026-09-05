@@ -9,11 +9,6 @@ from werkzeug.utils import secure_filename
 from models import db
 from models.user import User
 from config import Config
-import numpy as np
-from flask import Flask, render_template, request, redirect, flash
-from models import db
-from models.user import User
-from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
