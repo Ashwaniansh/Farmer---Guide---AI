@@ -1,8 +1,235 @@
 {% extends "base.html" %}
-{% block title %}Coming Soon{% endblock %}
+
+{% block title %}Weather Forecast{% endblock %}
+
 {% block content %}
-<div class="container py-5 text-center">
-    <h2 class="text-success">Coming Soon...</h2>
-    <p>This module is under development.</p>
+
+<div class="container py-5">
+
+    <!-- Page Heading -->
+    <div class="text-center mb-4">
+        <h2 class="text-success fw-bold">🌦️ Weather Forecast</h2>
+        <p class="text-muted">
+            Check current weather and upcoming forecast for your location.
+        </p>
+    </div>
+
+    <!-- Search Box -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-9">
+                        <label for="city" class="form-label fw-semibold">
+                            Enter City
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="city"
+                            name="city"
+                            placeholder="e.g. Modinagar"
+                            value="{{ city if city else '' }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-md-3">
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            🔍 Search Weather
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    {% if error %}
+
+    <!-- Error Message -->
+    <div class="alert alert-danger text-center">
+        {{ error }}
+    </div>
+
+    {% endif %}
+
+
+    {% if weather %}
+
+    <!-- Location -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-success">
+            {{ weather.location }}
+        </h3>
+
+        <p class="text-muted">
+            {{ weather.country }}
+        </p>
+    </div>
+
+
+    <!-- Current Weather -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <h4 class="text-success mb-4">
+                Current Weather
+            </h4>
+
+            <div class="row text-center">
+
+                <div class="col-md-3 mb-3">
+                    <div class="fs-2">🌡️</div>
+                    <h5>Temperature</h5>
+                    <p class="fs-4 fw-bold">
+                        {{ weather.current.temperature }} °C
+                    </p>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="fs-2">☁️</div>
+                    <h5>Condition</h5>
+                    <p class="fs-5 fw-semibold">
+                        {{ weather.current.condition }}
+                    </p>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="fs-2">💧</div>
+                    <h5>Humidity</h5>
+                    <p class="fs-4 fw-bold">
+                        {{ weather.current.humidity }}%
+                    </p>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="fs-2">💨</div>
+                    <h5>Wind Speed</h5>
+                    <p class="fs-4 fw-bold">
+                        {{ weather.current.wind_speed }} km/h
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- Farmer Weather Advisory -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body p-4">
+
+        <h4 class="text-success mb-3">
+            🌱 Farmer Weather Advisory
+        </h4>
+
+        <p class="text-muted">
+            Weather-based recommendations to help farmers plan
+            irrigation and crop activities.
+        </p>
+
+        {% for advice in weather.advisories %}
+
+        <div class="alert alert-light border mb-2">
+            {{ advice }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
 </div>
+
+    <!-- 7 Day Forecast -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <h4 class="text-success mb-4">
+                📅 7-Day Forecast
+            </h4>
+
+            <div class="row g-3">
+
+                {% for day in weather.forecast %}
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+
+                    <div class="card h-100 border shadow-sm">
+
+                        <div class="card-body text-center">
+
+                            <h6 class="fw-bold">
+                                {{ day.date }}
+                            </h6>
+
+                            <div class="fs-2 my-2">
+                                {{ day.icon }}
+                            </div>
+
+                            <p class="fw-semibold mb-2">
+                                {{ day.condition }}
+                            </p>
+
+                            <p class="mb-1">
+                                🌡️
+                                <strong>
+                                    {{ day.max_temp }}°C
+                                </strong>
+                                /
+                                {{ day.min_temp }}°C
+                            </p>
+
+                            <p class="mb-1 text-primary">
+                                🌧️ Rain Probability:
+    <strong>{{ day.rain_probability }}%</strong>
+</p>
+
+<p class="mb-0 text-info">
+    💧 Rain:
+    <strong>{{ day.rain }} mm</strong>
+</p>
+
+<p class="mb-1 text-warning">
+    🌅 {{ day.sunrise[11:16] }}
+</p>
+
+<p class="mb-0 text-secondary">
+    🌇 {{ day.sunset[11:16] }}
+</p>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}
