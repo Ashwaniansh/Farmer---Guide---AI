@@ -245,3 +245,4 @@ Model/checkpoints/
 *.ckpt
 *.ckpt.data-*
 *.ckpt.index
+Data/Fertilizer/
