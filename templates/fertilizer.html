@@ -1,12 +1,419 @@
 {% extends "base.html" %}
 
-{% block title %}Coming Soon{% endblock %}
+{% block title %}Fertilizer Recommendation{% endblock %}
 
 {% block content %}
 
-<div class="container py-5 text-center">
-    <h2 class="text-success">Coming Soon...</h2>
-    <p>This module is under development.</p>
+<div class="container py-5">
+
+    <!-- PAGE HEADER -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-success">
+            🌱 Fertilizer Recommendation
+        </h1>
+
+        <p class="text-muted">
+            Enter your field and crop details to get suitable fertilizer
+            recommendations.
+        </p>
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+    {% if error %}
+    <div class="alert alert-danger shadow-sm">
+        ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+
+    <!-- INPUT FORM -->
+    <div class="card shadow-sm border-0 mb-5">
+
+        <div class="card-body p-4">
+
+            <h4 class="text-success mb-4">
+                🧪 Field & Crop Information
+            </h4>
+
+            <form method="POST">
+
+                <div class="row g-4">
+
+                    <!-- TEMPERATURE -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Temperature (°C)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="temperature"
+                            class="form-control"
+                            placeholder="e.g. 30"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- HUMIDITY -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Humidity (%)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="humidity"
+                            class="form-control"
+                            placeholder="e.g. 60"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- MOISTURE -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Soil Moisture
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="moisture"
+                            class="form-control"
+                            placeholder="e.g. 45"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- NITROGEN -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Nitrogen (N)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="nitrogen"
+                            class="form-control"
+                            placeholder="Enter Nitrogen value"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PHOSPHORUS -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Phosphorus (P)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="phosphorus"
+                            class="form-control"
+                            placeholder="Enter Phosphorus value"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- POTASSIUM -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Potassium (K)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            name="potassium"
+                            class="form-control"
+                            placeholder="Enter Potassium value"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- SOIL TYPE -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Soil Type
+                        </label>
+
+                        <select
+                            name="soil_type"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Soil Type
+                            </option>
+
+                            <option value="Sandy">
+                                Sandy
+                            </option>
+
+                            <option value="Loamy">
+                                Loamy
+                            </option>
+
+                            <option value="Clayey">
+                                Clayey
+                            </option>
+
+                            <option value="Black">
+                                Black
+                            </option>
+
+                            <option value="Red">
+                                Red
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CROP TYPE -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Crop Type
+                        </label>
+
+                        <select
+                            name="crop_type"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Crop
+                            </option>
+
+                            <option value="Paddy">
+                                Paddy
+                            </option>
+
+                            <option value="Pulses">
+                                Pulses
+                            </option>
+
+                            <option value="Cotton">
+                                Cotton
+                            </option>
+
+                            <option value="Tobacco">
+                                Tobacco
+                            </option>
+
+                            <option value="Wheat">
+                                Wheat
+                            </option>
+
+                            <option value="Millets">
+                                Millets
+                            </option>
+
+                            <option value="Barley">
+                                Barley
+                            </option>
+
+                            <option value="Sugarcane">
+                                Sugarcane
+                            </option>
+
+                            <option value="Oil seeds">
+                                Oil Seeds
+                            </option>
+
+                            <option value="Maize">
+                                Maize
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUBMIT BUTTON -->
+                <div class="text-center mt-5">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-lg px-5"
+                    >
+                        🔍 Get Recommendation
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECOMMENDATION RESULTS -->
+    {% if recommendations %}
+
+    <div class="mb-4">
+
+        <h3 class="fw-bold text-success">
+            🌾 Recommended Fertilizers
+        </h3>
+
+        <p class="text-muted">
+            Based on the entered nutrient, soil and crop information,
+            these fertilizers are ranked as the top recommendations.
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        {% for item in recommendations %}
+
+        <div class="col-md-4">
+
+            <div class="card h-100 shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <!-- RANK -->
+                    <div class="mb-3">
+
+                        <span class="badge bg-success">
+                            Recommendation #{{ loop.index }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- FERTILIZER NAME -->
+                    <h3 class="fw-bold text-success">
+                        {{ item["Fertilizer"] }}
+                    </h3>
+
+
+                    <!-- REASON -->
+                    <p class="text-muted">
+                        {{ item["Reason"] }}
+                    </p>
+
+
+                    <hr>
+
+
+                    <!-- NPK -->
+                    <h6 class="fw-bold mb-3">
+                        Nutrient Composition
+                    </h6>
+
+                    <div class="row text-center">
+
+                        <div class="col-4">
+
+                            <div class="border rounded p-2">
+
+                                <strong class="text-success">
+                                    {{ item["N Contribution"] }}%
+                                </strong>
+
+                                <small class="d-block text-muted">
+                                    Nitrogen
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="border rounded p-2">
+
+                                <strong class="text-success">
+                                    {{ item["P Contribution"] }}%
+                                </strong>
+
+                                <small class="d-block text-muted">
+                                    Phosphorus
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-4">
+
+                            <div class="border rounded p-2">
+
+                                <strong class="text-success">
+                                    {{ item["K Contribution"] }}%
+                                </strong>
+
+                                <small class="d-block text-muted">
+                                    Potassium
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- WHY RECOMMENDED -->
+                    <div class="mt-4">
+                        <h6 class="fw-bold text-success">
+                            Why Recommended?
+                        </h6>
+
+                        <p class="text-muted mb-0">
+                            {{ item["Reason"] }}
+                         </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
 </div>
 
 {% endblock %}

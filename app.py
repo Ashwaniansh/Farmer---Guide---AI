@@ -13,18 +13,13 @@ from models import db
 from models.user import User
 from config import Config
 
-# ==========================================
 # FLASK APPLICATION
-# ==========================================
 
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config["SECRET_KEY"] = "FarmerGuideAI@2026"
 
-
-# ==========================================
 # UPLOAD CONFIGURATION
-# ==========================================
 
 UPLOAD_FOLDER = os.path.join("static", "uploads")
 
@@ -32,25 +27,16 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-# ==========================================
 # DISEASE DETECTION MODEL
-# ==========================================
 
 DISEASE_MODEL_PATH = (
     r"D:\Capstone Project\Farmer---Guide---AI"
-    r"\Model\disease_mobilenetv2_best.keras"
-)
-
+    r"\Model\disease_mobilenetv2_best.keras")
 disease_model = load_model(DISEASE_MODEL_PATH)
-
 print("Disease Detection Model Loaded Successfully")
 
-
-# ==========================================
 # 27 DISEASE CLASSES
 # EXACT ORDER USED DURING MODEL TRAINING
-# ==========================================
 
 DISEASE_CLASSES = [
 
@@ -90,25 +76,11 @@ DISEASE_CLASSES = [
     "Tomato - Healthy",
     "Tomato - Late Blight"
 ]
-
-
-# ==========================================
 # CONFIDENCE THRESHOLD
-# ==========================================
-
 CONFIDENCE_THRESHOLD = 60.0
 
-
-# ==========================================
 # DISEASE INFORMATION
-# ==========================================
-
 DISEASE_INFO = {
-
-    # --------------------------------------
-    # APPLE
-    # --------------------------------------
-
     "Apple - Apple Scab": {
         "symptoms":
             "Olive-green to dark lesions may appear on apple leaves and fruit.",
@@ -168,11 +140,7 @@ DISEASE_INFO = {
             "Improve air circulation and avoid excessive humidity."
     },
 
-
-    # --------------------------------------
     # CORN
-    # --------------------------------------
-
     "Corn - Common Rust": {
         "symptoms":
             "Small reddish-brown rust-colored pustules may appear on corn leaves.",
@@ -209,11 +177,7 @@ DISEASE_INFO = {
             "Maintain crop sanitation and consider resistant varieties."
     },
 
-
-    # --------------------------------------
     # GRAPE
-    # --------------------------------------
-
     "Grape - Black Rot": {
         "symptoms":
             "Brown circular lesions may develop on grape leaves and fruit.",
@@ -222,7 +186,6 @@ DISEASE_INFO = {
         "prevention":
             "Improve air circulation and remove infected debris."
     },
-
     "Grape - Esca": {
         "symptoms":
             "Leaves may develop irregular discoloration and affected vines may show decline.",
@@ -250,11 +213,7 @@ DISEASE_INFO = {
             "Maintain good air circulation and reduce prolonged leaf moisture."
     },
 
-
-    # --------------------------------------
     # PEACH
-    # --------------------------------------
-
     "Peach - Bacterial Spot": {
         "symptoms":
             "Small dark spots may appear on peach leaves and fruit.",
@@ -273,11 +232,7 @@ DISEASE_INFO = {
             "Continue proper watering, nutrition and regular monitoring."
     },
 
-
-    # --------------------------------------
     # PEPPER
-    # --------------------------------------
-
     "Pepper - Bacterial Spot": {
         "symptoms":
             "Small dark spots and lesions may appear on pepper leaves.",
@@ -296,11 +251,7 @@ DISEASE_INFO = {
             "Continue proper watering, nutrition and regular monitoring."
     },
 
-
-    # --------------------------------------
     # POTATO
-    # --------------------------------------
-
     "Potato - Early Blight": {
         "symptoms":
             "Dark spots with concentric ring patterns may appear on older leaves.",
@@ -328,11 +279,7 @@ DISEASE_INFO = {
             "Avoid prolonged leaf wetness and monitor plants regularly."
     },
 
-
-    # --------------------------------------
     # STRAWBERRY
-    # --------------------------------------
-
     "Strawberry - Healthy": {
         "symptoms":
             "The strawberry leaf appears healthy without major visible disease symptoms.",
@@ -351,11 +298,7 @@ DISEASE_INFO = {
             "Maintain field sanitation and avoid prolonged leaf moisture."
     },
 
-
-    # --------------------------------------
     # TOMATO
-    # --------------------------------------
-
     "Tomato - Bacterial Spot": {
         "symptoms":
             "Small dark spots may appear on tomato leaves and other plant parts.",
@@ -393,20 +336,13 @@ DISEASE_INFO = {
     }
 }
 
-
-# ==========================================
 # IMAGE VALIDATION
-# ==========================================
-
 def validate_image(filepath):
-
     try:
-
         img = load_img(
             filepath,
             target_size=(224, 224)
         )
-
         img_array = img_to_array(img)
 
         # Very dark image
@@ -418,54 +354,31 @@ def validate_image(filepath):
             return False
 
         return True
-
     except Exception:
-
         return False
 
-
-# ==========================================
 # DATABASE
-# ==========================================
-
 db.init_app(app)
-
 with app.app_context():
-
     db.create_all()
-
     crop_model = joblib.load(
         r"D:\Capstone Project\Farmer---Guide---AI\Model\crop_model.pkl"
     )
 
-
-# ==========================================
 # HOME
-# ==========================================
-
 @app.route("/")
 def home():
-
     return render_template("index.html")
 
-
-# ==========================================
 # ABOUT
-# ==========================================
-
 @app.route("/about")
 def about():
 
     return render_template("about.html")
 
-
-# ==========================================
 # LOGIN
-# ==========================================
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
 
         email = request.form.get("email")
@@ -502,14 +415,9 @@ def login():
 
     return render_template("login.html")
 
-
-# ==========================================
 # REGISTER
-# ==========================================
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     if request.method == "POST":
 
         name = request.form.get("name")
@@ -544,29 +452,17 @@ def register():
             "Registration Successful",
             "success"
         )
-
         return redirect("/login")
-
     return render_template("register.html")
 
-
-# ==========================================
 # DASHBOARD
-# ==========================================
-
 @app.route("/dashboard")
 def dashboard():
-
     return render_template("dashboard.html")
 
-
-# ==========================================
 # CROP RECOMMENDATION
-# ==========================================
-
 @app.route("/crop", methods=["GET", "POST"])
 def crop():
-
     if request.method == "POST":
 
         N = float(request.form["N"])
@@ -610,11 +506,7 @@ def crop():
 
     return render_template("crop.html")
 
-
-# ==========================================
 # DISEASE DETECTION
-# ==========================================
-
 @app.route("/disease", methods=["GET", "POST"])
 def disease():
 
@@ -626,10 +518,7 @@ def disease():
     if request.method == "POST":
 
         file = request.files.get("image")
-
-        # ----------------------------------
         # Check uploaded file
-        # ----------------------------------
 
         if file and file.filename:
 
@@ -646,10 +535,7 @@ def disease():
 
             image = filename
 
-            # ----------------------------------
             # Validate image
-            # ----------------------------------
-
             if not validate_image(filepath):
 
                 prediction = "Invalid Image"
@@ -665,68 +551,41 @@ def disease():
                     confidence=confidence,
                     disease_info=disease_info
                 )
-
-            # ----------------------------------
             # Load image
-            # ----------------------------------
-
             img = load_img(
                 filepath,
                 target_size=(224, 224)
             )
-
-            # ----------------------------------
             # Convert image to array
-            # ----------------------------------
-
             img_array = img_to_array(img)
 
-            # ----------------------------------
             # Normalize
             # Same preprocessing used during
             # model training
-            # ----------------------------------
 
             img_array = img_array / 255.0
-
-            # ----------------------------------
             # Add batch dimension
-            # ----------------------------------
 
             img_array = np.expand_dims(
                 img_array,
                 axis=0
             )
-
-            # ----------------------------------
             # Model prediction
-            # ----------------------------------
-
             predictions = disease_model.predict(
                 img_array,
                 verbose=0
             )
 
-            # ----------------------------------
             # Find predicted class
-            # ----------------------------------
 
             predicted_index = np.argmax(
                 predictions[0]
             )
-
-            # ----------------------------------
             # Confidence
-            # ----------------------------------
-
             confidence = float(
-                predictions[0][predicted_index] * 100
-            )
-
-            # ----------------------------------
+                predictions[0][predicted_index] * 100)
+            
             # Apply confidence threshold
-            # ----------------------------------
-
             if confidence >= CONFIDENCE_THRESHOLD:
 
                 prediction = DISEASE_CLASSES[
@@ -761,15 +620,9 @@ def disease():
         confidence=confidence,
         disease_info=disease_info
     )
-
-
-# ==========================================
 # WEATHER
-# ==========================================
-
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
-
     weather_data = None
     error = None
     city = ""
@@ -789,11 +642,7 @@ def weather():
             )
 
         try:
-
-            # -----------------------------------------
             # STEP 1: CITY -> LATITUDE/LONGITUDE
-            # -----------------------------------------
-
             geo_url = "https://geocoding-api.open-meteo.com/v1/search"
 
             geo_params = {
@@ -832,12 +681,8 @@ def weather():
             location_name = location["name"]
             country = location.get("country", "Unknown")
 
-            # -----------------------------------------
             # STEP 2: GET WEATHER DATA
-            # -----------------------------------------
-
             weather_url = "https://api.open-meteo.com/v1/forecast"
-
             weather_params = {
 
                 "latitude": latitude,
@@ -876,9 +721,7 @@ def weather():
 
             data = weather_response.json()
 
-            # -----------------------------------------
             # WEATHER CODE FUNCTION
-            # -----------------------------------------
 
             def weather_condition(code):
 
@@ -931,10 +774,7 @@ def weather():
                     ("🌦️", "Unknown Weather")
                 )
 
-            # -----------------------------------------
             # CURRENT WEATHER
-            # -----------------------------------------
-
             current = data["current"]
 
             current_icon, current_condition = weather_condition(
@@ -959,10 +799,7 @@ def weather():
 
                 "icon": current_icon
             }
-
-            # -----------------------------------------
             # 7-DAY FORECAST
-            # -----------------------------------------
 
             daily = data["daily"]
 
@@ -1006,12 +843,8 @@ def weather():
                     "sunset": daily["sunset"][i]
                 })
 
-            # -----------------------------------------
             # FARMER WEATHER ADVISORY
-            # -----------------------------------------
-
             advisories = []
-
             temperature = current_weather["temperature"]
             humidity = current_weather["humidity"]
             wind_speed = current_weather["wind_speed"]
@@ -1099,10 +932,7 @@ def weather():
                     "Use caution while spraying fertilizers or pesticides."
                 )
 
-            # -----------------------------------------
             # FINAL WEATHER OBJECT
-            # -----------------------------------------
-
             weather_data = {
 
                 "location": location_name,
@@ -1115,9 +945,7 @@ def weather():
 
                 "advisories": advisories
             }
-
         except requests.exceptions.RequestException as e:
-
             print("Weather API Error:", e)
 
             error = (
@@ -1140,41 +968,275 @@ def weather():
         city=city
     )
 
+# FERTILIZER RECOMMENDATION
+FERTILIZER_PROFILES = {
+    "Urea": {
+        "N": 46,
+        "P": 0,
+        "K": 0,
+        "use": "Nitrogen requirement"
+    },
 
-# ==========================================
-# FERTILIZER
-# ==========================================
+    "DAP": {
+        "N": 18,
+        "P": 46,
+        "K": 0,
+        "use": "Nitrogen + Phosphorus requirement"
+    },
 
-@app.route("/fertilizer")
+    "10-26-26": {
+        "N": 10,
+        "P": 26,
+        "K": 26,
+        "use": "Balanced NPK with higher Potassium"
+    },
+
+    "14-35-14": {
+        "N": 14,
+        "P": 35,
+        "K": 14,
+        "use": "Higher Phosphorus requirement"
+    },
+
+    "17-17-17": {
+        "N": 17,
+        "P": 17,
+        "K": 17,
+        "use": "Balanced NPK requirement"
+    },
+
+    "20-20": {
+        "N": 20,
+        "P": 20,
+        "K": 0,
+        "use": "Nitrogen + Phosphorus requirement"
+    },
+
+    "28-28": {
+        "N": 28,
+        "P": 28,
+        "K": 0,
+        "use": "Higher Nitrogen + Phosphorus requirement"
+    }
+}
+
+
+def recommend_fertilizers(
+    nitrogen,
+    phosphorus,
+    potassium,
+    soil_type,
+    crop_type,
+    top_n=3
+):
+
+    recommendations = []
+
+    # Nutrient requirement
+    n_need = max(0, 40 - nitrogen)
+    p_need = max(0, 40 - phosphorus)
+    k_need = max(0, 20 - potassium)
+
+    # Soil adjustment
+    soil_bonus = {
+        "Sandy": {
+            "N": 1.20,
+            "P": 1.00,
+            "K": 1.15
+        },
+
+        "Loamy": {
+            "N": 1.00,
+            "P": 1.00,
+            "K": 1.00
+        },
+
+        "Clayey": {
+            "N": 0.90,
+            "P": 1.00,
+            "K": 0.95
+        },
+
+        "Black": {
+            "N": 0.95,
+            "P": 1.00,
+            "K": 1.00
+        },
+
+        "Red": {
+            "N": 1.10,
+            "P": 1.05,
+            "K": 1.00
+        }
+    }
+
+    soil_factor = soil_bonus.get(
+        soil_type,
+        {
+            "N": 1.00,
+            "P": 1.00,
+            "K": 1.00
+        }
+    )
+
+    for fertilizer, profile in FERTILIZER_PROFILES.items():
+
+        n_score = (
+            n_need
+            * profile["N"]
+            * soil_factor["N"]
+        )
+
+        p_score = (
+            p_need
+            * profile["P"]
+            * soil_factor["P"]
+        )
+
+        k_score = (
+            k_need
+            * profile["K"]
+            * soil_factor["K"]
+        )
+
+        total_score = (
+            n_score
+            + p_score
+            + k_score
+        )
+
+        # Crop compatibility
+        crop_bonus = 0
+
+        if crop_type in [
+            "Paddy",
+            "Wheat",
+            "Maize",
+            "Barley"
+        ]:
+
+            if fertilizer in [
+                "Urea",
+                "DAP",
+                "28-28"
+            ]:
+                crop_bonus = 15
+
+        elif crop_type in [
+            "Pulses",
+            "Millets",
+            "Oil seeds"
+        ]:
+
+            if fertilizer in [
+                "17-17-17",
+                "10-26-26",
+                "14-35-14"
+            ]:
+                crop_bonus = 15
+
+        elif crop_type in [
+            "Cotton",
+            "Sugarcane",
+            "Tobacco"
+        ]:
+
+            if fertilizer in [
+                "10-26-26",
+                "17-17-17",
+                "28-28"
+            ]:
+                crop_bonus = 15
+
+        final_score = total_score + crop_bonus
+
+        recommendations.append({
+            "Fertilizer": fertilizer,
+            "Score": round(final_score, 2),
+            "N Contribution": profile["N"],
+            "P Contribution": profile["P"],
+            "K Contribution": profile["K"],
+            "Reason": profile["use"]
+        })
+
+    recommendations.sort(
+        key=lambda x: x["Score"],
+        reverse=True
+    )
+
+    return recommendations[:top_n]
+
+
+@app.route("/fertilizer", methods=["GET", "POST"])
 def fertilizer():
 
-    return render_template("fertilizer.html")
+    recommendations = None
+    error = None
 
+    if request.method == "POST":
 
-# ==========================================
+        try:
+
+            temperature = float(
+                request.form["temperature"]
+            )
+
+            humidity = float(
+                request.form["humidity"]
+            )
+
+            moisture = float(
+                request.form["moisture"]
+            )
+
+            nitrogen = float(
+                request.form["nitrogen"]
+            )
+
+            phosphorus = float(
+                request.form["phosphorus"]
+            )
+
+            potassium = float(
+                request.form["potassium"]
+            )
+
+            soil_type = request.form["soil_type"]
+
+            crop_type = request.form["crop_type"]
+
+            recommendations = recommend_fertilizers(
+                nitrogen=nitrogen,
+                phosphorus=phosphorus,
+                potassium=potassium,
+                soil_type=soil_type,
+                crop_type=crop_type,
+                top_n=3
+            )
+
+        except (ValueError, KeyError):
+
+            error = "Please enter valid fertilizer input values."
+
+    return render_template(
+        "fertilizer.html",
+        recommendations=recommendations,
+        error=error
+    )
+
 # MARKET
-# ==========================================
 
 @app.route("/market")
 def market():
 
     return render_template("market.html")
 
-
-# ==========================================
 # CHATBOT
-# ==========================================
-
 @app.route("/chatbot")
 def chatbot():
 
     return render_template("chatbot.html")
 
-
-# ==========================================
 # RUN APPLICATION
-# ==========================================
-
 if __name__ == "__main__":
-
     app.run(debug=True)
