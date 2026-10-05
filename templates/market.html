@@ -1,12 +1,433 @@
 {% extends "base.html" %}
 
-{% block title %}Coming Soon{% endblock %}
+{% block title %}Market Prices{% endblock %}
 
 {% block content %}
 
-<div class="container py-5 text-center">
-    <h2 class="text-success">Coming Soon...</h2>
-    <p>This module is under development.</p>
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h2 class="text-success fw-bold">
+            🌾 Market Prices
+        </h2>
+
+        <p class="text-muted">
+            Check current mandi prices for agricultural commodities.
+        </p>
+    </div>
+
+
+    <!-- SEARCH CARD -->
+
+    <div class="card shadow-sm p-4 mb-4">
+
+        <form method="POST">
+
+            <div class="row g-3">
+
+                <!-- CROP -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Select Crop
+                    </label>
+
+                    <select
+                        name="crop"
+                        id="crop"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose Crop
+                        </option>
+
+                        {% for item in commodities %}
+
+                            <option
+                                value="{{ item.id }}"
+                                {% if selected_crop == item.id|string %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- STATE -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Select State
+                    </label>
+
+                    <select
+                        name="state"
+                        id="state"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Choose State
+                        </option>
+
+                        {% for item in states %}
+
+                            <option
+                                value="{{ item.id }}"
+                                {% if selected_state == item.id|string %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- DISTRICT -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        District
+                    </label>
+
+                    <select
+                        name="district"
+                        id="district"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Districts
+                        </option>
+
+                        {% for item in districts %}
+
+                            <option
+                                value="{{ item.id }}"
+                                data-state="{{ item.state_id }}"
+                                {% if selected_district == item.id|string %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- MARKET -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Mandi / Market
+                    </label>
+
+                    <select
+                        name="market"
+                        id="market"
+                        class="form-select"
+                    >
+                        <option value="">
+                            All Markets
+                        </option>
+
+                        {% for item in markets %}
+
+                            <option
+                                value="{{ item.id }}"
+                                data-district="{{ item.district_id }}"
+                                {% if selected_market == item.id|string %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="text-center mt-4">
+
+                <button
+                    type="submit"
+                    class="btn btn-success px-5"
+                >
+                    🔍 Search Prices
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+{% if fallback_message %}
+
+<div class="alert alert-warning mt-4 shadow-sm">
+
+    <strong>⚠️ Alternate Mandi Data</strong><br>
+
+    {{ fallback_message }}
+
 </div>
+
+{% endif %}
+
+    <!-- RESULTS -->
+
+    {% if prices %}
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-success text-white">
+
+            <h5 class="mb-0">
+                📊 Mandi Price Results
+            </h5>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Commodity</th>
+                        <th>Market</th>
+                        <th>District</th>
+                        <th>Variety</th>
+                        <th>Date</th>
+                        <th>Arrivals (MT)</th>
+                        <th>Min Price</th>
+                        <th>Max Price</th>
+                        <th>Modal Price</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in prices %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.commodity }}
+                        </td>
+
+                        <td>
+                            {{ item.market }}
+                        </td>
+
+                        <td>
+                            {{ item.district }}
+                        </td>
+
+                        <td>
+                            {{ item.variety }}
+                        </td>
+
+                        <td>
+                            {{ item.date }}
+                        </td>
+
+                        <td>
+                            {{ item.arrivals }}
+                        </td>
+
+                        <td>
+                            ₹{{ item.min_price }}
+                        </td>
+
+                        <td>
+                            ₹{{ item.max_price }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ₹{{ item.modal_price }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ERROR -->
+
+    {% if error %}
+
+    <div class="alert alert-danger mt-4">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const stateSelect = document.getElementById("state");
+    const districtSelect = document.getElementById("district");
+    const marketSelect = document.getElementById("market");
+
+    function filterDistricts() {
+
+        const stateId = String(stateSelect.value || "");
+
+        Array.from(districtSelect.options).forEach(function (option) {
+
+            // All Districts
+            if (option.value === "") {
+                option.hidden = false;
+                return;
+            }
+
+            const optionStateId =
+                String(option.getAttribute("data-state") || "");
+
+            option.hidden =
+                stateId !== "" &&
+                optionStateId !== stateId;
+        });
+
+        // Agar selected district current state ka nahi hai
+        const selectedDistrict =
+            districtSelect.options[districtSelect.selectedIndex];
+
+        if (
+            selectedDistrict &&
+            selectedDistrict.value !== "" &&
+            selectedDistrict.hidden
+        ) {
+            districtSelect.value = "";
+        }
+
+        filterMarkets();
+    }
+
+
+    function filterMarkets() {
+
+        const districtId =
+            String(districtSelect.value || "");
+
+        Array.from(marketSelect.options).forEach(function (option) {
+
+            // All Markets
+            if (option.value === "") {
+                option.hidden = false;
+                return;
+            }
+
+            const optionDistrictId =
+                String(option.getAttribute("data-district") || "");
+
+            // District select nahi kiya
+            if (districtId === "") {
+
+                option.hidden = false;
+
+            }
+            else {
+
+                // Sirf selected district ke markets
+                option.hidden =
+                    optionDistrictId !== districtId;
+            }
+
+        });
+
+        // Agar selected market current district ka nahi hai
+        const selectedMarket =
+            marketSelect.options[marketSelect.selectedIndex];
+
+        if (
+            selectedMarket &&
+            selectedMarket.value !== "" &&
+            selectedMarket.hidden
+        ) {
+            marketSelect.value = "";
+        }
+    }
+
+
+    stateSelect.addEventListener(
+        "change",
+        function () {
+
+            districtSelect.value = "";
+            marketSelect.value = "";
+
+            filterDistricts();
+        }
+    );
+
+
+    districtSelect.addEventListener(
+        "change",
+        function () {
+
+            marketSelect.value = "";
+
+            filterMarkets();
+        }
+    );
+
+
+    // Initial load
+    filterDistricts();
+
+});
+
+</script>
 
 {% endblock %}

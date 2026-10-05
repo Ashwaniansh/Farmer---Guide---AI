@@ -246,3 +246,5 @@ Model/checkpoints/
 *.ckpt.data-*
 *.ckpt.index
 Data/Fertilizer/
+# Environment variables
+.env
