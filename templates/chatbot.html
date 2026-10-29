@@ -1,12 +1,1285 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Guide AI - Smart Farming Assistant</title>
 
-{% block title %}Coming Soon{% endblock %}
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-{% block content %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<div class="container py-5 text-center">
-    <h2 class="text-success">Coming Soon...</h2>
-    <p>This module is under development.</p>
+    <style>
+        :root {
+            --primary: #198754;
+            --primary-dark: #115c38;
+            --primary-light: #20c997;
+            --accent: #ffc107;
+            --bg-dark: #0f2419;
+            --text-main: #1e293b;
+            --chat-bubble-bot: rgba(255, 255, 255, 0.95);
+            --chat-bubble-user: linear-gradient(135deg, #198754 0%, #157347 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-image:
+                linear-gradient(rgba(15, 36, 25, 0.55), rgba(15, 36, 25, 0.70)),
+                url("{{ url_for('static', filename='images/AI chatbot.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navbar */
+        .chat-navbar {
+            background: rgba(15, 36, 25, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 12px 0;
+        }
+
+        .chat-navbar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .chat-navbar .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .chat-navbar .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: #fff;
+        }
+
+        /* Main Wrapper */
+        .chat-wrapper {
+            flex: 1;
+            max-width: 1020px;
+            width: 100%;
+            margin: 16px auto 26px;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Card container */
+        .chat-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.82);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            min-height: 680px;
+        }
+
+        /* Card Header */
+        .chat-header {
+            background: linear-gradient(135deg, #198754 0%, #0d5433 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .header-title h2 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #20c997;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #20c997;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-header {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .btn-header:hover {
+            background: rgba(255, 255, 255, 0.28);
+            color: #fff;
+        }
+
+        /* Quick Module Badges Bar */
+        .module-shortcuts {
+            background: rgba(240, 248, 243, 0.75);
+            padding: 8px 20px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            scrollbar-width: none;
+        }
+        .module-shortcuts::-webkit-scrollbar { display: none; }
+
+        .module-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .module-badge:hover {
+            background: #198754;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Chat Body */
+        .chat-body {
+            flex: 1;
+            min-height: 420px;
+            max-height: 540px;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(25, 135, 84, 0.3);
+            border-radius: 10px;
+        }
+
+        /* Message Rows */
+        .message-row {
+            display: flex;
+            gap: 12px;
+            max-width: 88%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-row.user-row {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-row.bot-row {
+            align-self: flex-start;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .bot-avatar {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+            border: 2px solid #fff;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            border: 2px solid #fff;
+        }
+
+        .message-bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+
+        .bot-bubble {
+            background: var(--chat-bubble-bot);
+            color: #0f2419;
+            border-top-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .bot-bubble p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bot-bubble a {
+            color: #198754;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .bot-bubble a:hover {
+            color: #115c38;
+        }
+
+        .bot-bubble ul, .bot-bubble ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .user-bubble {
+            background: var(--chat-bubble-user);
+            color: #fff;
+            border-top-right-radius: 4px;
+            box-shadow: 0 4px 18px rgba(25, 135, 84, 0.25);
+        }
+
+        /* Uploaded Image inside Chat Bubble */
+        .chat-uploaded-img-wrapper {
+            position: relative;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 260px;
+        }
+
+        .chat-img-display {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .chat-img-display:hover {
+            transform: scale(1.02);
+        }
+
+        .img-meta-tag {
+            background: rgba(15, 36, 25, 0.85);
+            color: #20c997;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Welcome Card */
+        .welcome-hero {
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 20px;
+            padding: 30px 24px;
+            text-align: center;
+            border: 1px solid rgba(25, 135, 84, 0.25);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            margin: auto 0;
+        }
+
+        .welcome-icon {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .welcome-hero h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: #198754;
+            margin-bottom: 8px;
+        }
+
+        .welcome-hero p {
+            color: #475569;
+            max-width: 620px;
+            margin: 0 auto 18px;
+            font-size: 0.95rem;
+        }
+
+        .photo-cta-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 1.5px dashed #2e7d32;
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin: 0 auto 20px;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .photo-cta-box:hover {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+        }
+
+        .photo-cta-text {
+            text-align: left;
+        }
+
+        .photo-cta-text strong {
+            color: #1b5e20;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .photo-cta-text span {
+            color: #2e7d32;
+            font-size: 0.8rem;
+        }
+
+        .photo-cta-btn {
+            background: #2e7d32;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        /* Prompt Chips Grid */
+        .prompt-chips-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .prompt-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .prompt-chip {
+            background: #fff;
+            border: 1px solid rgba(25, 135, 84, 0.3);
+            color: #198754;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .prompt-chip:hover {
+            background: #198754;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            background: var(--chat-bubble-bot);
+            border-radius: 18px;
+            border-top-left-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: fit-content;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: #198754;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .typing-label {
+            font-size: 0.85rem;
+            color: #198754;
+            font-weight: 500;
+        }
+
+        /* Image Preview Tray (above input) */
+        .image-preview-tray {
+            background: rgba(232, 245, 233, 0.92);
+            border-top: 1px solid rgba(25, 135, 84, 0.2);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .preview-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 6px 14px 6px 8px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .preview-card img {
+            width: 46px;
+            height: 46px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #e0e0e0;
+        }
+
+        .preview-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-filename {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-badge {
+            font-size: 0.75rem;
+            color: #198754;
+            font-weight: 600;
+        }
+
+        .remove-preview-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .remove-preview-btn:hover {
+            transform: scale(1.15);
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            background: rgba(255, 255, 255, 0.88);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 14px 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .attach-btn {
+            background: #e8f5e9;
+            color: #198754;
+            border: 1.5px solid #a5d6a7;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .attach-btn:hover {
+            background: #198754;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input-field {
+            width: 100%;
+            border-radius: 28px;
+            padding: 13px 48px 13px 20px;
+            border: 1.5px solid #cbd5e1;
+            outline: none;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .chat-input-field:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15);
+        }
+
+        .mic-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.15rem;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .mic-btn:hover {
+            color: #198754;
+            background: #f1f5f9;
+        }
+
+        .mic-btn.listening {
+            color: #dc3545;
+            animation: pulse-red 1.2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .send-btn {
+            border: none;
+            background: linear-gradient(135deg, #198754, #157347);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 28px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(25, 135, 84, 0.25);
+            white-space: nowrap;
+            height: 48px;
+        }
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, #157347, #0f5132);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(25, 135, 84, 0.35);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .chat-wrapper {
+                margin: 8px auto;
+                padding: 0 8px;
+            }
+            .chat-card {
+                min-height: calc(100vh - 100px);
+                border-radius: 16px;
+            }
+            .chat-header {
+                padding: 12px 16px;
+            }
+            .header-title h2 {
+                font-size: 18px;
+            }
+            .message-row {
+                max-width: 95%;
+            }
+            .send-btn span {
+                display: none;
+            }
+            .send-btn {
+                padding: 12px 16px;
+            }
+            .photo-cta-box {
+                flex-direction: column;
+                text-align: center;
+            }
+            .photo-cta-text {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TOP NAVIGATION -->
+<nav class="chat-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <span>🌾</span> <strong>Farmer Guide AI</strong>
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a>
+            <a class="nav-link" href="/dashboard"><i class="bi bi-grid"></i> Dashboard</a>
+            <a class="nav-link" href="{{ url_for('about') }}"><i class="bi bi-info-circle"></i> About</a>
+        </div>
+    </div>
+</nav>
+
+<div class="chat-wrapper">
+
+    <div class="chat-card">
+
+        <!-- HEADER -->
+        <div class="chat-header">
+            <div class="header-title">
+                <h2><span>🌾</span> Farmer Guide AI</h2>
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    <span>AI Farming Assistant • All Modules Integrated</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button type="button" class="btn-header" id="clearBtn" title="Clear conversation history">
+                    <i class="bi bi-trash3"></i> Clear Chat
+                </button>
+            </div>
+        </div>
+
+        <!-- MODULE SHORTCUTS -->
+        <div class="module-shortcuts">
+            <a href="/crop" class="module-badge">🌱 Crop AI</a>
+            <a href="/disease" class="module-badge">🍂 Disease AI</a>
+            <a href="/fertilizer" class="module-badge">🧪 Fertilizer Calculator</a>
+            <a href="/weather" class="module-badge">⛅ Live Weather</a>
+            <a href="/market" class="module-badge">💰 Mandi Bhav</a>
+        </div>
+
+        <!-- CHAT BODY -->
+        <div class="chat-body" id="chatBody">
+
+            {% if chat_history and chat_history|length > 0 %}
+                {% for chat in chat_history %}
+                    {% if chat.role == "user" %}
+                        <div class="message-row user-row">
+                            <div class="avatar user-avatar">👨‍🌾</div>
+                            <div class="message-bubble user-bubble">
+                                {% if chat.image_url %}
+                                <div class="chat-uploaded-img-wrapper">
+                                    <img src="{{ chat.image_url }}" alt="Uploaded plant leaf" class="chat-img-display" onclick="window.open(this.src, '_blank')">
+                                    <div class="img-meta-tag"><i class="bi bi-shield-check"></i> Scanned for Plant Disease</div>
+                                </div>
+                                {% endif %}
+                                {{ chat.message }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="message-row bot-row">
+                            <div class="avatar bot-avatar">🌾</div>
+                            <div class="message-bubble bot-bubble" data-raw="{{ chat.message|e }}">
+                                {{ chat.message }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="welcome-hero" id="welcomeHero">
+                    <div class="welcome-icon">🌾</div>
+                    <h3>Namaste! Welcome to Farmer Guide AI</h3>
+                    <p>
+                        Your intelligent smart farming partner. Ask anything about crops, fertilizers,
+                        live weather, or mandi rates — or <strong>upload a leaf photo directly</strong> to diagnose plant diseases with AI!
+                    </p>
+
+                    <!-- DIRECT PHOTO DIAGNOSIS CALLOUT -->
+                    <div class="photo-cta-box" onclick="document.getElementById('imageInput').click()">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-camera-fill text-success fs-2"></i>
+                            <div class="photo-cta-text">
+                                <strong>📸 Upload Plant Leaf Photo for AI Diagnosis</strong>
+                                <span>Detect 27 crop diseases instantly with organic & chemical cure</span>
+                            </div>
+                        </div>
+                        <button type="button" class="photo-cta-btn">
+                            <i class="bi bi-upload"></i> Choose Photo
+                        </button>
+                    </div>
+
+                    <div class="prompt-chips-title">Popular Questions to Ask Right Now</div>
+                    <div class="prompt-chips">
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">🌾 Best crops for Rabi season</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">🧪 Fertilizer dosage for Wheat</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">⛅ Weather forecast in Delhi</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">💰 Wheat Mandi Rate</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">🍂 How to cure leaf curl in tomato?</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">💧 What are the benefits of drip irrigation?</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">🌿 How to prepare Jeevamrut for organic farming?</button>
+                        <button type="button" class="prompt-chip" onclick="askPrompt(this)">🏛️ PM-KISAN Yojana benefits</button>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <!-- IMAGE PREVIEW TRAY (when a leaf photo is attached) -->
+        <div id="imagePreviewTray" class="image-preview-tray" style="display: none;">
+            <div class="preview-card">
+                <img id="previewThumbnail" src="" alt="Selected leaf preview">
+                <div class="preview-info">
+                    <span class="preview-filename" id="previewFileName">leaf_photo.jpg</span>
+                    <span class="preview-badge"><i class="bi bi-magic"></i> Plant Leaf Attached • Ready for AI Diagnosis</span>
+                </div>
+                <button type="button" class="remove-preview-btn" id="removeImageBtn" title="Remove attached photo">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- INPUT AREA -->
+        <div class="chat-input-area">
+            <form id="chatForm" class="chat-form" method="POST" action="/chatbot" enctype="multipart/form-data">
+                <!-- HIDDEN FILE INPUT -->
+                <input
+                    type="file"
+                    id="imageInput"
+                    name="image"
+                    accept="image/*"
+                    style="display: none;"
+                >
+
+                <!-- ATTACH PHOTO BUTTON -->
+                <button
+                    type="button"
+                    class="attach-btn"
+                    id="attachBtn"
+                    title="Upload plant photo for disease diagnosis"
+                >
+                    <i class="bi bi-camera-fill"></i>
+                </button>
+
+                <!-- TEXT INPUT WRAPPER -->
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        name="message"
+                        class="chat-input-field"
+                        placeholder="Ask anything or attach a leaf photo (English or हिंदी)..."
+                        autocomplete="off"
+                    >
+                    <button type="button" class="mic-btn" id="micBtn" title="Voice typing (English/Hindi)">
+                        <i class="bi bi-mic-fill"></i>
+                    </button>
+                </div>
+
+                <!-- SEND BUTTON -->
+                <button type="submit" class="send-btn" id="sendBtn">
+                    <span>Send</span>
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
+        </div>
+
+    </div>
+
 </div>
 
-{% endblock %}
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const chatBody = document.getElementById("chatBody");
+    const chatForm = document.getElementById("chatForm");
+    const messageInput = document.getElementById("messageInput");
+    const imageInput = document.getElementById("imageInput");
+    const attachBtn = document.getElementById("attachBtn");
+    const imagePreviewTray = document.getElementById("imagePreviewTray");
+    const previewThumbnail = document.getElementById("previewThumbnail");
+    const previewFileName = document.getElementById("previewFileName");
+    const removeImageBtn = document.getElementById("removeImageBtn");
+    const sendBtn = document.getElementById("sendBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const micBtn = document.getElementById("micBtn");
+    const welcomeHero = document.getElementById("welcomeHero");
+
+    let selectedFile = null;
+
+    // Scroll to bottom helper
+    function scrollToBottom() {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Markdown / Rich text formatter for bot responses
+    function formatBotMessage(text) {
+        if (!text) return "";
+        let formatted = text;
+
+        // Escape dangerous HTML tags while preserving markdown
+        formatted = formatted
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+
+        // Convert [Title](/url) markdown links into styled HTML links
+        formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="fw-bold text-success">$1 <i class="bi bi-box-arrow-up-right small"></i></a>');
+
+        // Bold **text**
+        formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+        // Bullet points (• or - )
+        formatted = formatted.replace(/^[•\-\*]\s+(.*)$/gm, '<li>$1</li>');
+        formatted = formatted.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+        formatted = formatted.replace(/<\/ul>\s*<ul>/g, '');
+
+        // Line breaks
+        formatted = formatted.replace(/\n\n/g, '<br><br>');
+        formatted = formatted.replace(/\n/g, '<br>');
+
+        return formatted;
+    }
+
+    // Format any existing server-rendered bot bubbles on load
+    document.querySelectorAll(".bot-bubble").forEach(bubble => {
+        const raw = bubble.getAttribute("data-raw") || bubble.innerText;
+        bubble.innerHTML = formatBotMessage(raw);
+    });
+
+    scrollToBottom();
+
+    // Trigger file chooser on camera/attach click
+    attachBtn.addEventListener("click", () => {
+        imageInput.click();
+    });
+
+    // Handle file selection
+    imageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleSelectedFile(file);
+        }
+    });
+
+    function handleSelectedFile(file) {
+        if (!file.type.startsWith("image/")) {
+            alert("Please select a valid image file (JPG, PNG, JPEG).");
+            return;
+        }
+        selectedFile = file;
+        previewFileName.innerText = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewThumbnail.src = e.target.result;
+            imagePreviewTray.style.display = "flex";
+            messageInput.placeholder = "Add a question about this plant (optional), then hit Send...";
+            messageInput.focus();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Remove selected image
+    removeImageBtn.addEventListener("click", () => {
+        clearSelectedFile();
+    });
+
+    function clearSelectedFile() {
+        selectedFile = null;
+        imageInput.value = "";
+        imagePreviewTray.style.display = "none";
+        previewThumbnail.src = "";
+        messageInput.placeholder = "Ask anything or attach a leaf photo (English or हिंदी)...";
+    }
+
+    // Drag and drop onto chat window
+    window.addEventListener("dragover", (e) => e.preventDefault());
+    window.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
+            if (file.type.startsWith("image/")) {
+                handleSelectedFile(file);
+            }
+        }
+    });
+
+    // Paste image from clipboard
+    window.addEventListener("paste", (e) => {
+        if (e.clipboardData && e.clipboardData.items) {
+            for (let i = 0; i < e.clipboardData.items.length; i++) {
+                const item = e.clipboardData.items[i];
+                if (item.type.indexOf("image") !== -1) {
+                    const blob = item.getAsFile();
+                    handleSelectedFile(blob);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Quick prompt chip click handler
+    function askPrompt(btn) {
+        const query = btn.innerText.replace(/^[^\w\s]+/, '').trim();
+        messageInput.value = query;
+        sendMessage(query, null);
+    }
+
+    // Append user message to DOM
+    function appendUserMessage(msg, imgDataUrl) {
+        if (welcomeHero) {
+            welcomeHero.style.display = 'none';
+        }
+        const row = document.createElement("div");
+        row.className = "message-row user-row";
+
+        let imgHtml = "";
+        if (imgDataUrl) {
+            imgHtml = `
+                <div class="chat-uploaded-img-wrapper">
+                    <img src="${imgDataUrl}" alt="Uploaded leaf" class="chat-img-display" onclick="window.open(this.src, '_blank')">
+                    <div class="img-meta-tag"><i class="bi bi-shield-check"></i> Scanned for Plant Disease</div>
+                </div>
+            `;
+        }
+
+        row.innerHTML = `
+            <div class="avatar user-avatar">👨‍🌾</div>
+            <div class="message-bubble user-bubble">
+                ${imgHtml}
+                <div>${escapeHtml(msg)}</div>
+            </div>
+        `;
+        chatBody.appendChild(row);
+        scrollToBottom();
+    }
+
+    // Append typing indicator
+    function showTypingIndicator(customText) {
+        const row = document.createElement("div");
+        row.className = "message-row bot-row";
+        row.id = "typingRow";
+        row.innerHTML = `
+            <div class="avatar bot-avatar">🌾</div>
+            <div class="typing-indicator">
+                <div class="typing-dots">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+                <span class="typing-label">${customText || "Farmer Guide AI is thinking..."}</span>
+            </div>
+        `;
+        chatBody.appendChild(row);
+        scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+        const typing = document.getElementById("typingRow");
+        if (typing) typing.remove();
+    }
+
+    // Append bot message to DOM
+    function appendBotMessage(msg) {
+        removeTypingIndicator();
+        const row = document.createElement("div");
+        row.className = "message-row bot-row";
+        row.innerHTML = `
+            <div class="avatar bot-avatar">🌾</div>
+            <div class="message-bubble bot-bubble">${formatBotMessage(msg)}</div>
+        `;
+        chatBody.appendChild(row);
+        scrollToBottom();
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Send Message function (Supports both Text and Image Upload via FormData)
+    async function sendMessage(text, file) {
+        if (!text && !file) return;
+
+        let userText = text ? text.trim() : "";
+        let fileToSend = file || selectedFile;
+        let previewDataUrl = null;
+
+        if (fileToSend) {
+            previewDataUrl = previewThumbnail.src;
+            if (!userText) {
+                userText = "Uploaded leaf photo for AI disease diagnosis.";
+            }
+        }
+
+        appendUserMessage(userText, previewDataUrl);
+        showTypingIndicator(fileToSend ? "Analyzing leaf with AI disease model..." : "Farmer Guide AI is thinking...");
+
+        messageInput.value = "";
+        clearSelectedFile();
+
+        messageInput.disabled = true;
+        sendBtn.disabled = true;
+        attachBtn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append("message", userText);
+            formData.append("ajax", "1");
+            if (fileToSend) {
+                formData.append("image", fileToSend);
+            }
+
+            const response = await fetch("/chatbot", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                let errText = null;
+                try {
+                    const errData = await response.json();
+                    if (errData && errData.bot_message) {
+                        appendBotMessage(errData.bot_message);
+                        return;
+                    } else if (errData && errData.error) {
+                        errText = errData.error;
+                    }
+                } catch (e) {}
+                throw new Error(errText || ("Server status " + response.status));
+            }
+
+            const data = await response.json();
+            if (data.success && data.bot_message) {
+                appendBotMessage(data.bot_message);
+            } else {
+                appendBotMessage(data.bot_message || "🌾 I am ready to help! Please ask your farming question or mention your crop and city.");
+            }
+        } catch (err) {
+            console.error("Chatbot fetch error:", err);
+            appendBotMessage("🌾 **Farmer Guide AI:** I am ready to help! Please ask your agricultural question, or mention your crop, city, and state (e.g. *'Wheat rate in Punjab Ludhiana'* or *'Tomato in Nashik'*).");
+        } finally {
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+            attachBtn.disabled = false;
+            messageInput.focus();
+            scrollToBottom();
+        }
+    }
+
+    // Form submit
+    chatForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if (text || selectedFile) {
+            sendMessage(text, selectedFile);
+        }
+    });
+
+    // Clear chat button
+    clearBtn.addEventListener("click", async function () {
+        if (!confirm("Are you sure you want to clear the conversation history?")) return;
+
+        try {
+            const res = await fetch("/chatbot/clear", {
+                method: "POST",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            window.location.reload();
+        } catch (err) {
+            window.location.href = "/chatbot/clear";
+        }
+    });
+
+    // Voice typing with Web Speech API
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'hi-IN';
+
+        recognition.onstart = function () {
+            micBtn.classList.add("listening");
+            messageInput.placeholder = "Listening... speak now (English / हिंदी)...";
+        };
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            messageInput.value = transcript;
+            micBtn.classList.remove("listening");
+            messageInput.placeholder = "Ask anything or attach a leaf photo (English or हिंदी)...";
+            sendMessage(transcript, selectedFile);
+        };
+
+        recognition.onerror = function () {
+            micBtn.classList.remove("listening");
+            messageInput.placeholder = "Ask anything or attach a leaf photo (English or हिंदी)...";
+        };
+
+        recognition.onend = function () {
+            micBtn.classList.remove("listening");
+            messageInput.placeholder = "Ask anything or attach a leaf photo (English or हिंदी)...";
+        };
+
+        micBtn.addEventListener("click", function () {
+            if (micBtn.classList.contains("listening")) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    } else {
+        micBtn.style.display = "none";
+    }
+</script>
+
+</body>
+</html>

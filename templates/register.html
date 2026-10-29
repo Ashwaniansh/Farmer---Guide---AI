@@ -3,34 +3,216 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow p-4">
-                <h2 class="text-center text-success mb-4">
-                    Create Account
-                </h2>
-                <form method="POST">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0 p-4">
+                <div class="text-center mb-4">
+                    <span class="fs-1">🌱</span>
+                    <h2 class="text-success fw-bold mt-2">Join Farmer Guide AI</h2>
+                    <p class="text-muted small">Create your account for personalized farming guidance</p>
+                </div>
+
+                <!-- Alert Message Box -->
+                <div id="authAlert" class="alert d-none" role="alert"></div>
+
+                <form id="registerForm" novalidate>
                     <div class="mb-3">
-                        <label>Full Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="name" class="form-label fw-semibold">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" id="name" class="form-control" placeholder="Ramesh Patel" required autocomplete="name">
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" id="email" class="form-control" placeholder="farmer@example.com" required autocomplete="email">
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label>Mobile Number</label>
-                        <input type="text" name="mobile" class="form-control" required>
+                        <label for="mobile" class="form-label fw-semibold">Mobile Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                            <input type="tel" id="mobile" class="form-control" placeholder="9876543210" autocomplete="tel">
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" id="password" class="form-control" placeholder="Minimum 6 characters" required minlength="6" autocomplete="new-password">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn" title="Toggle password visibility">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn btn-success w-100">
-                        Register
+
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                            <input type="password" id="confirmPassword" class="form-control" placeholder="Re-enter your password" required autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-success w-100 py-2 fw-semibold">
+                        <span id="btnText">Create Account</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                     </button>
                 </form>
+
+                <div class="text-center mt-4 pt-2 border-top">
+                    <p class="text-muted small mb-0">
+                        Already have an account? 
+                        <a href="/login" class="text-success fw-bold text-decoration-none">Sign in here</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("registerForm");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const mobileInput = document.getElementById("mobile");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+    const authAlert = document.getElementById("authAlert");
+    const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+
+    // Toggle password visibility
+    togglePasswordBtn.addEventListener("click", function() {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        togglePasswordIcon.className = isPassword ? "bi bi-eye-slash" : "bi bi-eye";
+    });
+
+    function showAlert(message, type = "danger") {
+        authAlert.className = `alert alert-${type} alert-dismissible fade show`;
+        authAlert.innerHTML = `${message} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        authAlert.classList.remove("d-none");
+    }
+
+    function setLoading(isLoading) {
+        submitBtn.disabled = isLoading;
+        if (isLoading) {
+            btnText.textContent = "Creating Account...";
+            btnSpinner.classList.remove("d-none");
+        } else {
+            btnText.textContent = "Create Account";
+            btnSpinner.classList.add("d-none");
+        }
+    }
+
+    form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        authAlert.classList.add("d-none");
+
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const mobile = mobileInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // Validations
+        if (!name || !email || !password || !confirmPassword) {
+            showAlert("Please fill in all required fields.");
+            return;
+        }
+
+        if (password.length < 6) {
+            showAlert("Password must be at least 6 characters long.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert("Passwords do not match. Please re-enter.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // 1. Create account via Firebase Authentication
+            const userCredential = await FarmerAuth.auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // 2. Set user display name in Firebase profile
+            await user.updateProfile({
+                displayName: name
+            });
+
+            // 3. Send optional verification email
+            try {
+                await user.sendEmailVerification();
+            } catch (vErr) {
+                console.warn("Email verification send note:", vErr);
+            }
+
+            // 4. Retrieve ID token
+            const idToken = await user.getIdToken();
+
+            // 5. Sync session & profile with Flask backend
+            const syncRes = await fetch("/api/auth/session-register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id_token: idToken,
+                    name: name,
+                    mobile: mobile
+                })
+            });
+
+            const data = await syncRes.json();
+            if (data.success) {
+                showAlert("Account created successfully! Redirecting to Dashboard...", "success");
+                setTimeout(() => {
+                    window.location.replace("/dashboard");
+                }, 500);
+            } else {
+                setLoading(false);
+                showAlert(data.error || "Session synchronization failed.");
+            }
+
+        } catch (error) {
+            setLoading(false);
+            console.error("Firebase Registration Error:", error.code, error.message);
+
+            let userMsg = "Registration failed. Please try again.";
+            switch(error.code) {
+                case "auth/email-already-in-use":
+                    userMsg = "This email address is already registered. Please sign in instead.";
+                    break;
+                case "auth/invalid-email":
+                    userMsg = "The email address is invalid.";
+                    break;
+                case "auth/operation-not-allowed":
+                    userMsg = "Email/password accounts are not enabled. Contact administrator.";
+                    break;
+                case "auth/weak-password":
+                    userMsg = "Password is too weak. Please use a stronger combination.";
+                    break;
+                case "auth/network-request-failed":
+                    userMsg = "Network error. Please check your internet connection.";
+                    break;
+                default:
+                    if (error.message) userMsg = error.message;
+            }
+            showAlert(userMsg);
+        }
+    });
+});
+</script>
 {% endblock %}

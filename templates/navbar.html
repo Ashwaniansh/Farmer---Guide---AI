@@ -10,19 +10,69 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link active" href="/">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">About</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
+
+                {% if session.get('user') %}
+                    <!-- Authenticated User Navigation Items -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="/dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-warning" href="/chatbot">
+                            🤖 AI Chatbot
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                                {{ session['user'].get('name') or session['user'].get('email').split('@')[0] }}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                            <li class="dropdown-header text-muted small text-truncate" style="max-width: 220px;">
+                                {{ session['user'].get('email') }}
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/dashboard">
+                                    <i class="bi bi-grid-fill me-2 text-success"></i> Farming Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/reset-password">
+                                    <i class="bi bi-key-fill me-2 text-secondary"></i> Reset Password
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger fw-semibold" href="#" onclick="FarmerAuth.handleFirebaseLogout(); return false;">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <!-- Logged-out Navigation Items -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-light btn-sm text-success fw-bold ms-lg-2 px-3 py-1" href="/register">
+                            Register
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
